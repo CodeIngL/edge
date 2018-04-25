@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aspectj>
+    <aspects>
+
+        <concrete-aspect name="httpTrace" extends="cn.com.servyou.yypt.passthrough.http.HttpAspectj">
+            <pointcut name="httpResponsePoint"
+                      expression="call(* javax.servlet.FilterChain+.doFilter(..)) AND within(com.qianmi.edge.filter.PassthroughFilter)"/>
+        </concrete-aspect>
+    </aspects>
+
+    <weaver options="-verbose -Xset:weaveJavaxPackages=true">
+        <include within="com.qianmi.edge.filter.PassthroughFilter"/>
+    </weaver>
+</aspectj>

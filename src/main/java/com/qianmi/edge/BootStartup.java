@@ -1,5 +1,6 @@
 package com.qianmi.edge;
 
+import com.qianmi.edge.filter.PassthroughFilter;
 import com.qianmi.edge.listener.StartupListener;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -40,7 +41,17 @@ public class BootStartup {
     }
 
     @Bean
-    public WebMvcConfigurerAdapter webMvcConfig(){
+    public FilterRegistrationBean passthroughFilter() {
+        FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+        registrationBean.setFilter(new PassthroughFilter());
+        registrationBean.setName("passthrough");
+        registrationBean.addUrlPatterns("*.do");
+        registrationBean.setOrder(1);
+        return registrationBean;
+    }
+
+    @Bean
+    public WebMvcConfigurerAdapter webMvcConfig() {
         return new WebMvcConfigurerAdapter() {
             @Override
             public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -48,6 +59,7 @@ public class BootStartup {
             }
         };
     }
+
     public static void main(String[] args) {
         new SpringApplicationBuilder(BootStartup.class).web(true).run(args);
     }
