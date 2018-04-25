@@ -11,7 +11,7 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
 >
 
-    <context:property-placeholder location="WEB-INF/config.properties"/>
+    <context:property-placeholder location="config.properties"/>
 
     <dubbo:application id="default-dubbo-application" name="${dubbo.application.name}"/>
 
@@ -33,6 +33,5 @@
         <entry key="enabled" value="*"/>
         <entry key="check" value="false"/>
     </util:map>
-
 
 </beans>
