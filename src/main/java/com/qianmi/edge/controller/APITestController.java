@@ -164,12 +164,12 @@ public class APITestController {
                 String className = url.getPath();
                 String version = url.getParameter("version");
 
-                try {
+/*                try {
                     Class.forName(className); // 忽略上下文中不存在class
                 } catch (ClassNotFoundException e) {
                     logger.debug("can not found bean {} in context", className);
                     continue;
-                }
+                }*/
 
                 String packageName = className.replace(".", FOLDER_SPLIT);
 
