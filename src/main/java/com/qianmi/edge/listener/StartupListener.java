@@ -91,6 +91,8 @@ public class StartupListener implements ServletContextListener {
             // 获取加载间隔时长
             String intervalString = servletContext.getInitParameter(THIRD_LIB_REFRESH_INTERVAL);
 
+            System.out.print(intervalString);
+            System.out.print(location);
             // 加载Lib文件
             ClassLoaderUtil.loadJarPath(location);
 

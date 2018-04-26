@@ -4,9 +4,7 @@ import com.qianmi.edge.filter.PassthroughFilter;
 import com.qianmi.edge.listener.StartupListener;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.context.embedded.InitParameterConfiguringServletContextInitializer;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -15,8 +13,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.util.IntrospectorCleanupListener;
 
 import javax.servlet.ServletContextListener;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * <p>Description: </p>

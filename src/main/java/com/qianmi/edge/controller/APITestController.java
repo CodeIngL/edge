@@ -8,6 +8,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 import com.alibaba.dubbo.rpc.RpcException;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.qianmi.edge.InterfaceExecutor;
 import com.qianmi.edge.InterfaceLoader;
 import com.qianmi.edge.bean.JSONTreeNode;
@@ -27,9 +28,10 @@ import com.alibaba.fastjson.JSONException;
  * <p>
  * Controller
  * </p>
+ *
  * @author Angus
- * @date 2013-2-25
  * @version 1.0
+ * @date 2013-2-25
  * @since 1.0
  */
 @Controller
@@ -41,8 +43,9 @@ public class APITestController {
 
     /**
      * 根据ID查找子节点
+     *
      * @param treeNode
-     * @param path 子节点ID,支持沿深度查询。例如：com/xxx/abc; 直接返回abc节点
+     * @param path     子节点ID,支持沿深度查询。例如：com/xxx/abc; 直接返回abc节点
      * @return
      */
     private JSONTreeNode findChildByText(JSONTreeNode treeNode, String path) {
@@ -72,9 +75,10 @@ public class APITestController {
      * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|--com <br>
      * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|--xxx <br>
      * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|--abc <br>
-     * @param parentNode 父节点
+     *
+     * @param parentNode  父节点
      * @param packageName 包名，支持深度创建；
-     * @param isGroup 是否group；根据此标记选择不同样式
+     * @param isGroup     是否group；根据此标记选择不同样式
      */
     private void addPackageNode(JSONTreeNode parentNode, String packageName, boolean isGroup) {
 
@@ -113,8 +117,9 @@ public class APITestController {
 
     /**
      * 创建方法节点
-     * @param classNode class节点
-     * @param methods 方法名称数组
+     *
+     * @param classNode  class节点
+     * @param methods    方法名称数组
      * @param serviceKey 获取URL的serviceKey，方便界面根据方法节点获取对应的URL；
      */
     private void addMethodNode(JSONTreeNode classNode, String[] methods, String serviceKey) {
@@ -138,10 +143,12 @@ public class APITestController {
 
     /**
      * 获取接口JsonTree
+     *
      * @return json数组
      */
     @RequestMapping("getApiList.do")
-    public @ResponseBody
+    public
+    @ResponseBody
     String getApiList() {
 
         Set<String> serviceKeySet = InterfaceLoader.getRegistryProviderCache().keySet();
@@ -207,14 +214,16 @@ public class APITestController {
 
     /**
      * 执行测试
+     *
      * @param methodName 接口名
-     * @param params 参数名
+     * @param params     参数名
      * @return 结果
      */
     @RequestMapping("executeTest.do")
-    public @ResponseBody
+    public
+    @ResponseBody
     String executeTest(@RequestParam String methodName, @RequestParam String params,
-            @RequestParam(required = false) String serviceUrl) {
+                       @RequestParam(required = false) String serviceUrl) throws IllegalAccessException, InstantiationException {
 
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("success", false);
@@ -223,13 +232,14 @@ public class APITestController {
         String arr[] = methodName.split("@");
         String serviceKey = arr[0];
         String mth = arr[1];
+        Method serviceMethod = null;
         try {
 
             Object serviceBean = InterfaceLoader.getServiceBean(serviceKey, serviceUrl);
             if (serviceBean == null) {
                 msg = "找不到服务Bean";
             } else {
-                Method serviceMethod = InterfaceLoader.getServiceMethod(serviceBean, mth);
+                serviceMethod = InterfaceLoader.getServiceMethod(serviceBean, mth);
                 if (serviceMethod == null) {
                     msg = "找不到服务Method";
                 } else {
@@ -240,13 +250,23 @@ public class APITestController {
 
         } catch (JSONException e) {
             msg = "参数格式错误;" + InterfaceExecutor.getStackTrace(e);
-        } catch (InvocationTargetException e){
+            msg += "正确的格式是";
+            int i = 0;
+            for (Class cls : serviceMethod.getParameterTypes()) {
+                if (cls.isPrimitive()) {
+                    msg += "基本类型参数" + i + "  " + cls.toString() + "\n";
+                    continue;
+                } else {
+                    msg += "复杂类型参数" + i + "  " + JSON.toJSONString(cls.newInstance(), SerializerFeature.WriteMapNullValue) + "\n";
+                }
+            }
+        } catch (InvocationTargetException e) {
             msg = "InvocationTargetException:" + InterfaceExecutor.getStackTrace(e.getTargetException());
 
-            if(e.getTargetException() instanceof RpcException){
+            if (e.getTargetException() instanceof RpcException) {
                 //RPC异常时，清除缓存的ReferenceConfig对象
                 InterfaceLoader.destroyReference(serviceKey, serviceUrl);
-            }else {
+            } else {
                 result.put("success", true);
             }
         } catch (Exception e) {
@@ -262,11 +282,13 @@ public class APITestController {
 
     /**
      * 获取接口参数描述
+     *
      * @param serviceKey 接口名称 (xxxProvider.xxx)
      * @return 接口参数的Json描述
      */
     @RequestMapping("getParamDesc.do")
-    public @ResponseBody
+    public
+    @ResponseBody
     String getParamDesc(@RequestParam String serviceKey, @RequestParam String methodName) {
 
         Map<String, Object> result = new HashMap<String, Object>();
