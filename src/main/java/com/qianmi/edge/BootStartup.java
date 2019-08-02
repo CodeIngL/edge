@@ -1,10 +1,8 @@
 package com.qianmi.edge;
 
-import com.qianmi.edge.filter.PassthroughFilter;
 import com.qianmi.edge.listener.StartupListener;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -34,16 +32,6 @@ public class BootStartup {
     @Bean(name = "introspectorCleanupListener")
     public ServletContextListener introspectorCleanupListener() {
         return new IntrospectorCleanupListener();
-    }
-
-    @Bean
-    public FilterRegistrationBean passthroughFilter() {
-        FilterRegistrationBean registrationBean = new FilterRegistrationBean();
-        registrationBean.setFilter(new PassthroughFilter());
-        registrationBean.setName("passthrough");
-        registrationBean.addUrlPatterns("*.do");
-        registrationBean.setOrder(1);
-        return registrationBean;
     }
 
     @Bean
