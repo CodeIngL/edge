@@ -15,9 +15,10 @@ import org.springframework.util.StringUtils;
  * <p>
  * 文件监控器，监控文件的状态，当文件发生修改时，触发事件
  * </p>
+ *
  * @author Angus
- * @date 2013-3-1
  * @version 1.0
+ * @date 2013-3-1
  * @since 1.0
  */
 public abstract class FileWatchdog extends Thread {
@@ -80,42 +81,40 @@ public abstract class FileWatchdog extends Thread {
         }
     }
 
-    protected void checkAndConfigure(String watchfilePath) {
-        if (StringUtils.hasText(watchfilePath)) {
-            File watchFile = new File(watchfilePath);
-            if (!watchFile.exists()) {
-                return;
-            }
+    protected void checkAndConfigure(String watchFilePath) {
+        if (!StringUtils.hasText(watchFilePath)) {
+            return;
+        }
+        File watchFile = new File(watchFilePath);
+        if (!watchFile.exists()) {
+            return;
+        }
+        try {
+            Set<File> fileSet = new HashSet<File>();
+            this.loopFiles(watchFile, fileSet); // 加载所有文件
 
-            try {
-                Set<File> fileSet = new HashSet<File>();
-                this.loopFiles(watchFile, fileSet); // 加载所有文件
+            for (File file : fileSet) {
+                if (file.exists()) {
+                    long l = file.lastModified(); // this can also throw a SecurityException
 
-                for (Iterator<File> iterator = fileSet.iterator(); iterator.hasNext();) {
-                    File file = iterator.next();
-                    if (file.exists()) {
-                        long l = file.lastModified(); // this can also throw a SecurityException
+                    String fileAbsPath = file.getAbsolutePath();
+                    long lastModif = getLastModif(fileAbsPath);
 
-                        String fileAbsPath = file.getAbsolutePath();
-                        long lastModif = getLastModif(fileAbsPath);
-
-                        if (l > lastModif) { // however, if we reached this point this
-                            recordLastModify(fileAbsPath, l);
-                            doOnChange(file);
-                        }
+                    if (l > lastModif) { // however, if we reached this point this
+                        recordLastModify(fileAbsPath, l);
+                        doOnChange(file);
                     }
                 }
-            } catch (Throwable ex) {
-                logger.error("Check and load file field! ", ex);
             }
+        } catch (Throwable ex) {
+            logger.error("Check and load file field! ", ex);
         }
-
     }
 
     private long getLastModif(String key) {
         long lastModif = 0;
         if (lastModifMap.get(key) != null) {
-            lastModif = lastModifMap.get(key).longValue();
+            lastModif = lastModifMap.get(key);
         }
         return lastModif;
     }

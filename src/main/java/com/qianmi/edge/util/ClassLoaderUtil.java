@@ -18,22 +18,27 @@ import org.slf4j.LoggerFactory;
  * <p>
  * 功能描述
  * </p>
+ *
  * @author Angus
  * @version 1.0
  * @since 1.0
  */
 public final class ClassLoaderUtil {
-    /** URLClassLoader的addURL方法 */
+    /**
+     * URLClassLoader的addURL方法
+     */
     private static Method addURL = initAddMethod();
 
     private static URLClassLoader system = (URLClassLoader) ClassLoader.getSystemClassLoader();
 
     private static Logger logger = LoggerFactory.getLogger(ClassLoaderUtil.class);
 
-    /** 初始化方法 */
+    /**
+     * 初始化方法
+     */
     private static final Method initAddMethod() {
         try {
-            Method add = URLClassLoader.class.getDeclaredMethod("addURL", new Class[] { URL.class });
+            Method add = URLClassLoader.class.getDeclaredMethod("addURL", new Class[]{URL.class});
             add.setAccessible(true);
             return add;
         } catch (Exception e) {
@@ -47,8 +52,7 @@ public final class ClassLoaderUtil {
      */
     private static final void loopFiles(File file, List<File> files) {
         if (file.isDirectory()) {
-            File[] tmps = file.listFiles();
-            for (File tmp : tmps) {
+            for (File tmp : file.listFiles()) {
                 loopFiles(tmp, files);
             }
         } else {
@@ -62,19 +66,18 @@ public final class ClassLoaderUtil {
      * <pre>
      * 加载JAR文件
      * </pre>
-     * 
+     *
      * @param file
      */
     public static final void loadJarFile(File file) {
-
         if (file == null) {
             return;
         }
         try {
-            addURL.invoke(system, new Object[] { file.toURI().toURL() });
-            logger.debug("成功加载{}包：", new Object[] { file.getAbsolutePath() });
+            addURL.invoke(system, new Object[]{file.toURI().toURL()});
+            logger.debug("成功加载{}包：", new Object[]{file.getAbsolutePath()});
         } catch (Exception e) {
-            logger.error("{}包加载失败.", new Object[] { file.getAbsolutePath(), e });
+            logger.error("{}包加载失败.", new Object[]{file.getAbsolutePath(), e});
         }
     }
 
@@ -82,7 +85,7 @@ public final class ClassLoaderUtil {
      * <pre>
      * 从一个目录加载所有JAR文件
      * </pre>
-     * 
+     *
      * @param path
      */
     public static final void loadJarPath(String path) {
