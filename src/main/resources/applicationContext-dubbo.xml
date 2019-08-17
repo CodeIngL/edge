@@ -8,19 +8,20 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
->
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <context:property-placeholder location="config.properties"/>
 
-    <dubbo:application id="default-dubbo-application" name="${dubbo.application.name}"/>
+    <dubbo:application id="default-dubbo-application" name="edge_apitest"/>
 
-    <dubbo:registry protocol="${default.dubbo.registry.protocol}"
+    <dubbo:registry id="default-dubbo-registry"
+                    protocol="${default.dubbo.registry.protocol}"
                     address="${default.dubbo.registry.address}"
-                    id="default-dubbo-registry" register="false" check="false"
-                    timeout="${default.dubbo.registry.timeout}" file="${default.dubbo.registry.filestore}"/>
+                    register="false" check="false"
+                    timeout="10000" file="${default.dubbo.registry.filestore}"/>
 
-    <dubbo:reference id="registryService" registry="default-dubbo-registry"
+    <dubbo:reference id="registryService"
+                     registry="default-dubbo-registry"
                      interface="com.alibaba.dubbo.registry.RegistryService" check="false"/>
 
 

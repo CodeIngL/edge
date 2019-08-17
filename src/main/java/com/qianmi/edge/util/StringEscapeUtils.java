@@ -100,46 +100,6 @@ public class StringEscapeUtils {
         escapeJavaStyleString(out, str, false);
     }
 
-    /**
-     * <p>Escapes the characters in a <code>String</code> using JavaScript String rules.</p>
-     * <p>Escapes any values it finds into their JavaScript String form.
-     * Deals correctly with quotes and control-chars (tab, backslash, cr, ff, etc.) </p>
-     *
-     * <p>So a tab becomes the characters <code>'\\'</code> and
-     * <code>'t'</code>.</p>
-     *
-     * <p>The only difference between Java strings and JavaScript strings
-     * is that in JavaScript, a single quote must be escaped.</p>
-     *
-     * <p>Example:
-     * <pre>
-     * input string: He didn't say, "Stop!"
-     * output string: He didn\'t say, \"Stop!\"
-     * </pre>
-     * </p>
-     *
-     * @param str  String to escape values in, may be null
-     * @return String with escaped values, <code>null</code> if null string input
-     */
-    public static String escapeJavaScript(String str) {
-        return escapeJavaStyleString(str, true);
-    }
-
-    /**
-     * <p>Escapes the characters in a <code>String</code> using JavaScript String rules
-     * to a <code>Writer</code>.</p>
-     *
-     * <p>A <code>null</code> string input has no effect.</p>
-     *
-     * @see #escapeJavaScript(java.lang.String)
-     * @param out  Writer to write escaped string into
-     * @param str  String to escape values in, may be null
-     * @throws IllegalArgumentException if the Writer is <code>null</code>
-     * @throws java.io.IOException if error occurs on underlying Writer
-     **/
-    public static void escapeJavaScript(Writer out, String str) throws IOException {
-        escapeJavaStyleString(out, str, true);
-    }
 
     /**
      * <p>Worker method for the {@link #escapeJavaScript(String)} method.</p>
@@ -382,40 +342,7 @@ public class StringEscapeUtils {
         }
     }
 
-    /**
-     * <p>Unescapes any JavaScript literals found in the <code>String</code>.</p>
-     *
-     * <p>For example, it will turn a sequence of <code>'\'</code> and <code>'n'</code>
-     * into a newline character, unless the <code>'\'</code> is preceded by another
-     * <code>'\'</code>.</p>
-     *
-     * @see #unescapeJava(String)
-     * @param str  the <code>String</code> to unescape, may be null
-     * @return A new unescaped <code>String</code>, <code>null</code> if null string input
-     */
-    public static String unescapeJavaScript(String str) {
-        return unescapeJava(str);
-    }
 
-    /**
-     * <p>Unescapes any JavaScript literals found in the <code>String</code> to a
-     * <code>Writer</code>.</p>
-     *
-     * <p>For example, it will turn a sequence of <code>'\'</code> and <code>'n'</code>
-     * into a newline character, unless the <code>'\'</code> is preceded by another
-     * <code>'\'</code>.</p>
-     *
-     * <p>A <code>null</code> string input has no effect.</p>
-     *
-     * @see #unescapeJava(java.io.Writer, String)
-     * @param out  the <code>Writer</code> used to output unescaped characters
-     * @param str  the <code>String</code> to unescape, may be null
-     * @throws IllegalArgumentException if the Writer is <code>null</code>
-     * @throws java.io.IOException if error occurs on underlying Writer
-     */
-    public static void unescapeJavaScript(Writer out, String str) throws IOException {
-        unescapeJava(out, str);
-    }
 
     // HTML and XML
     //--------------------------------------------------------------------------
@@ -559,110 +486,6 @@ public class StringEscapeUtils {
             return;
         }
         Entities.HTML40.unescape(writer, string);
-    }
-
-    //-----------------------------------------------------------------------
-    /**
-     * <p>Escapes the characters in a <code>String</code> using XML entities.</p>
-     *
-     * <p>For example: <tt>"bread" & "butter"</tt> =>
-     * <tt>&amp;quot;bread&amp;quot; &amp;amp; &amp;quot;butter&amp;quot;</tt>.
-     * </p>
-     *
-     * <p>Supports only the five basic XML entities (gt, lt, quot, amp, apos).
-     * Does not support DTDs or external entities.</p>
-     *
-     * <p>Note that unicode characters greater than 0x7f are currently escaped to
-     *    their numerical \\u equivalent. This may change in future releases. </p>
-     *
-     * @param writer  the writer receiving the unescaped string, not null
-     * @param str  the <code>String</code> to escape, may be null
-     * @throws IllegalArgumentException if the writer is null
-     * @throws java.io.IOException if there is a problem writing
-     * @see #unescapeXml(java.lang.String)
-     */
-    public static void escapeXml(Writer writer, String str) throws IOException {
-        if (writer == null ) {
-            throw new IllegalArgumentException("The Writer must not be null.");
-        }
-        if (str == null) {
-            return;
-        }
-        Entities.XML.escape(writer, str);
-    }
-
-    /**
-     * <p>Escapes the characters in a <code>String</code> using XML entities.</p>
-     *
-     * <p>For example: <tt>"bread" & "butter"</tt> =>
-     * <tt>&amp;quot;bread&amp;quot; &amp;amp; &amp;quot;butter&amp;quot;</tt>.
-     * </p>
-     *
-     * <p>Supports only the five basic XML entities (gt, lt, quot, amp, apos).
-     * Does not support DTDs or external entities.</p>
-     *
-     * <p>Note that unicode characters greater than 0x7f are currently escaped to
-     *    their numerical \\u equivalent. This may change in future releases. </p>
-     *
-     * @param str  the <code>String</code> to escape, may be null
-     * @return a new escaped <code>String</code>, <code>null</code> if null string input
-     * @see #unescapeXml(java.lang.String)
-     */
-    public static String escapeXml(String str) {
-        if (str == null) {
-            return null;
-        }
-        return Entities.XML.escape(str);
-    }
-
-    //-----------------------------------------------------------------------
-    /**
-     * <p>Unescapes a string containing XML entity escapes to a string
-     * containing the actual Unicode characters corresponding to the
-     * escapes.</p>
-     *
-     * <p>Supports only the five basic XML entities (gt, lt, quot, amp, apos).
-     * Does not support DTDs or external entities.</p>
-     *
-     * <p>Note that numerical \\u unicode codes are unescaped to their respective
-     *    unicode characters. This may change in future releases. </p>
-     *
-     * @param writer  the writer receiving the unescaped string, not null
-     * @param str  the <code>String</code> to unescape, may be null
-     * @throws IllegalArgumentException if the writer is null
-     * @throws java.io.IOException if there is a problem writing
-     * @see #escapeXml(String)
-     */
-    public static void unescapeXml(Writer writer, String str) throws IOException {
-        if (writer == null ) {
-            throw new IllegalArgumentException("The Writer must not be null.");
-        }
-        if (str == null) {
-            return;
-        }
-        Entities.XML.unescape(writer, str);
-    }
-
-    /**
-     * <p>Unescapes a string containing XML entity escapes to a string
-     * containing the actual Unicode characters corresponding to the
-     * escapes.</p>
-     *
-     * <p>Supports only the five basic XML entities (gt, lt, quot, amp, apos).
-     * Does not support DTDs or external entities.</p>
-     *
-     * <p>Note that numerical \\u unicode codes are unescaped to their respective 
-     *    unicode characters. This may change in future releases. </p>
-     *
-     * @param str  the <code>String</code> to unescape, may be null
-     * @return a new unescaped <code>String</code>, <code>null</code> if null string input
-     * @see #escapeXml(String)
-     */
-    public static String unescapeXml(String str) {
-        if (str == null) {
-            return null;
-        }
-        return Entities.XML.unescape(str);
     }
 
 }

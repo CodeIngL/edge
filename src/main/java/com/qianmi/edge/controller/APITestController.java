@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.dubbo.common.URL;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
@@ -34,9 +35,10 @@ import com.alibaba.fastjson.JSONException;
  * @date 2013-2-25
  * @since 1.0
  */
-@Controller
+@RestController
 @RequestMapping(value = "/", produces = "text/plain;charset=UTF-8")
 public class APITestController {
+
     private static final Logger logger = LoggerFactory.getLogger(APITestController.class);
 
     private static final String FOLDER_SPLIT = "/";
@@ -147,9 +149,7 @@ public class APITestController {
      * @return json数组
      */
     @RequestMapping("getApiList.do")
-    public
-    @ResponseBody
-    String getApiList() {
+    public String getApiList() {
 
         Set<String> serviceKeySet = InterfaceLoader.getRegistryProviderCache().keySet();
 
@@ -220,10 +220,8 @@ public class APITestController {
      * @return 结果
      */
     @RequestMapping("executeTest.do")
-    public
-    @ResponseBody
-    String executeTest(@RequestParam String methodName, @RequestParam String params,
-                       @RequestParam(required = false) String serviceUrl) throws IllegalAccessException, InstantiationException {
+    public String executeTest(@RequestParam String methodName, @RequestParam String params,
+                              @RequestParam(required = false) String serviceUrl) throws IllegalAccessException, InstantiationException {
 
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("success", false);
@@ -287,9 +285,7 @@ public class APITestController {
      * @return 接口参数的Json描述
      */
     @RequestMapping("getParamDesc.do")
-    public
-    @ResponseBody
-    String getParamDesc(@RequestParam String serviceKey, @RequestParam String methodName) {
+    public String getParamDesc(@RequestParam String serviceKey, @RequestParam String methodName) {
 
         Map<String, Object> result = new HashMap<String, Object>();
 
